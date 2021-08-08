@@ -17,5 +17,24 @@
             <column name="jobTitle" type="varchar(255)"/>
             <column name="yearBorn" type="int"/>
         </createTable>
+        <createTable tableName="flightschedule">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="departureAirportCode" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="destinationAirportCode" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="airline" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="int"/>
+            <column name="stops" type="int"/>
+            <column name="durationMinutes" type="int"/>
+            <column name="departure" type="datetime"/>
+            <column name="arrival" type="datetime"/>
+        </createTable>
     </changeSet>
 </databaseChangeLog>
