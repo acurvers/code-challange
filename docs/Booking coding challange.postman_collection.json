@@ -1,0 +1,18 @@
+{
+	"info": {
+		"_postman_id": "cb7f4ca0-01a3-4555-9240-f782a5a59a9c",
+		"name": "Booking coding challange",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "flight offer search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		}
+	]
+}
