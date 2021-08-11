@@ -71,14 +71,36 @@ public class FlightScheduleResourceTest {
     }
 
     @Test
-    void listFlights() throws Exception {
+    void listFlightSchedules() throws Exception {
+        //WHEN
         final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
         when(FLIGHTSCHEDULE_DAO.findAll()).thenReturn(flightSchedules);
 
-        final List<FlightSchedule> response = RESOURCES.target("/flightschedule/search")
-            .request().get(new GenericType<List<FlightSchedule>>() {
-            });
+        //THEN
+        final List<FlightSchedule> response = RESOURCES
+            .target("/flightschedule/search")
+            .request()
+            .get(new GenericType<List<FlightSchedule>>() {});
 
+        //VERIFY
+        verify(FLIGHTSCHEDULE_DAO).findAll();
+        assertThat(response).containsAll(flightSchedules);
+    }
+
+    @Test
+    void searchFlightSchedules() throws Exception {
+        //WHEN
+        final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
+        when(FLIGHTSCHEDULE_DAO.simpleSearch(null, null, null,
+            null, null, null, null,null)).thenReturn(flightSchedules);
+
+        //THEN
+        final List<FlightSchedule> response = RESOURCES
+            .target("/flightschedule/search")
+            .request()
+            .get(new GenericType<List<FlightSchedule>>() {});
+
+        //VERIFY
         verify(FLIGHTSCHEDULE_DAO).findAll();
         assertThat(response).containsAll(flightSchedules);
     }

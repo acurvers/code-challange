@@ -26,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class ChallengeIntegrationTest {
+
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-example.yml");
 
     @TempDir
@@ -34,10 +35,10 @@ class ChallengeIntegrationTest {
     static Supplier<String> ARCHIVED_LOG = () -> tempDir.resolve("application-%d-%i.log.gz").toString();
 
     static final DropwizardAppExtension<HelloWorldConfiguration> APP = new DropwizardAppExtension<>(
-            HelloWorldApplication.class, CONFIG_PATH,
-            config("database.url", () -> "jdbc:h2:" + tempDir.resolve("database.h2")),
-            config("logging.appenders[1].currentLogFilename", CURRENT_LOG),
-            config("logging.appenders[1].archivedLogFilenamePattern", ARCHIVED_LOG)
+        HelloWorldApplication.class, CONFIG_PATH,
+        config("database.url", () -> "jdbc:h2:" + tempDir.resolve("database.h2")),
+        config("logging.appenders[1].currentLogFilename", CURRENT_LOG),
+        config("logging.appenders[1].archivedLogFilenamePattern", ARCHIVED_LOG)
     );
 
     @BeforeAll
@@ -46,7 +47,7 @@ class ChallengeIntegrationTest {
     }
 
     @Test
-    void testFlightQuery() throws Exception {
+    void testWhenDefaultFlightScheduleQueryExpectTwoFlighSchedules() throws Exception {
         final FlightSchedule expectedFlightScheduleA = new FlightSchedule();
         expectedFlightScheduleA.setAirline("Easyjet");
         expectedFlightScheduleA.setDepartureAirportCode("AMS");
@@ -65,23 +66,35 @@ class ChallengeIntegrationTest {
         expectedFlightScheduleB.setDeparture(DateTime.parse("2021-09-05T07:05+02:00"));
         expectedFlightScheduleB.setArrival(DateTime.parse("2021-09-05T09:25+02:00"));
 
-        final List<FlightSchedule> flights = search(null,null,null,null);
+        final List<FlightSchedule> flights = search(null,
+            "AMS",
+            "Rome",
+            null,
+            "2021-09-05");
+        assertThat(flights).isNotEmpty();
     }
 
-    private List<FlightSchedule> search(String departureCity, String departureAirportCode, String destinationCity, String destinationAirportCode) {
-        final Optional<String> optDepartureCity = Optional.ofNullable(departureCity);
-        final Optional<String> optDepartureAirportCode = Optional.ofNullable(departureAirportCode);
-        final Optional<String> optDestinationCity = Optional.ofNullable(destinationCity);
-        final Optional<String> optDestinationAirportCode = Optional.ofNullable(destinationAirportCode);
-        final WebTarget target = APP.client().target("http://localhost:" + APP.getLocalPort() + "/flightschedule/search");
-        optDepartureCity.ifPresent(value -> target.queryParam("departureCity", value));
-        optDepartureAirportCode.ifPresent(value -> target.queryParam("departureAirportCode", value));
-        optDestinationCity.ifPresent(value -> target.queryParam("destinationCity", value));
-        optDestinationAirportCode.ifPresent(value -> target.queryParam("destinationAirportCode", value));
-        final List<FlightSchedule> flights = target
+    private List<FlightSchedule> search(String departureCity,
+                                        String departureAirportCode,
+                                        String destinationCity,
+                                        String destinationAirportCode,
+                                        String departureDate) {
+        final WebTarget target = getWebTarget("/flightschedule/search");
+
+        return target
+            .queryParam("departureCity", departureCity)
+            .queryParam("departureAirportCode", departureAirportCode)
+            .queryParam("destinationCity", destinationCity)
+            .queryParam("destinationAirportCode", destinationAirportCode)
+            .queryParam("departure", departureDate)
+            .queryParam("arrival", "1")
+            .queryParam("maxDuration", "1")
             .request()
             .get(new GenericType<List<FlightSchedule>>() {});
-        return flights;
+    }
+
+    private WebTarget getWebTarget(String urlPath) {
+        return APP.client().target("http://localhost:" + APP.getLocalPort() + urlPath);
     }
 
     @Test
@@ -93,7 +106,7 @@ class ChallengeIntegrationTest {
         assertThat(logFile).exists();
         final String logFileContent = new String(Files.readAllBytes(logFile), UTF_8);
         assertThat(logFileContent)
-                .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
-                .doesNotContain("Exception", "ERROR", "FATAL");
+            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
+            .doesNotContain("Exception", "ERROR", "FATAL");
     }
 }

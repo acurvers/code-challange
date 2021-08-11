@@ -22,30 +22,51 @@ import java.util.Objects;
         @NamedQuery(
             name = FlightSchedule.FIND_ALL_QUERY_NAME,
             query = "SELECT f FROM FlightSchedule f"
+        ),
+        @NamedQuery(
+            name = FlightSchedule.SIMPLE_SEARCH_QUERY_NAME,
+            query = "SELECT f FROM FlightSchedule f "
+                + "WHERE"
+                + " :maxStops IS NULL OR f.stops < :maxStops "
+                + "AND"
+                + " :maxDurationMinutes IS NULL OR f.durationMinutes < :maxDurationMinutes "
+                + "AND"
+                + " :departureCity IS NULL OR f.departureCity < :departureCity "
+                + "AND"
+                + " :departureAirportCode IS NULL OR f.departureAirportCode < :departureAirportCode "
+                + "AND"
+                + " :destinationAirportCode IS NULL OR f.destinationAirportCode < :destinationAirportCode "
+                + "AND"
+                + " :destinationCity IS NULL OR f.destinationCity < :destinationCity "
+                + "AND"
+                + " :departure IS NULL OR f.departure = :departure "
+                + "AND"
+                + " :arrival IS NULL OR f.arrival = :arrival "
         )
     }
 )
 public class FlightSchedule {
 
     public static final String FIND_ALL_QUERY_NAME = "com.example.helloworld.core.FlightSchedule.findAll";
+    public static final String SIMPLE_SEARCH_QUERY_NAME = "com.example.helloworld.core.FlightSchedule.simpleSearch";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "durationMinutes")
-    @Min(value = 0)
-    @Max(value = 9999)
-    private int durationMinutes;
+//    @Min(value = 0)
+//    @Max(value = 9999)
+    private Integer durationMinutes;
 
     @Column(name = "stops")
-    @Min(value = 0)
-    @Max(value = 9999)
-    private int stops;
+//    @Min(value = 0)
+//    @Max(value = 9999)
+    private Integer stops;
 
     //    price in euro cents
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @Column(name = "airline")
     private String airline;
@@ -55,6 +76,12 @@ public class FlightSchedule {
 
     @Column(name = "destinationAirportCode")
     private String destinationAirportCode;
+
+    @Column(name = "departureCity")
+    private String departureCity;
+
+    @Column(name = "destinationCity")
+    private String destinationCity;
 
     @Column
     private DateTime departure;

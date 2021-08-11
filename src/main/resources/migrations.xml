@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
     <changeSet id="1" author="codahale">
@@ -35,6 +35,16 @@
             <column name="durationMinutes" type="int"/>
             <column name="departure" type="datetime"/>
             <column name="arrival" type="datetime"/>
+            <column name="departureCity" type="varchar(255)"/>
+            <column name="destinationCity" type="varchar(255)"/>
         </createTable>
+        <sql dbms="h2, oracle, mysql"
+             endDelimiter="\nGO"
+             splitStatements="true"
+             stripComments="true">insert into flightschedule
+                                  (departureAirportCode, destinationAirportCode, airline, durationMinutes, stops,
+                                   departure, departureCity)
+                                  values ('AMS', 'SCO', 'Easyjet', 140, 0, '2021-09-05', 'Amsterdam')
+        </sql>
     </changeSet>
 </databaseChangeLog>
