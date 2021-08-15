@@ -1,6 +1,6 @@
 package com.example.helloworld.db;
 
-import com.example.helloworld.core.Person;
+import com.example.helloworld.core.FlightSchedule;
 import com.mysql.cj.conf.PropertyKey;
 import io.dropwizard.testing.junit5.DAOTestExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @Testcontainers(disabledWithoutDocker = true)
 @ExtendWith(DropwizardExtensionsSupport.class)
 @DisabledForJreRange(min = JRE.JAVA_16)
-public class PersonDAOIntegrationTest {
+public class FlightScheduleDAOIntegrationTest {
     @Container
     private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.24"));
 
@@ -37,43 +37,38 @@ public class PersonDAOIntegrationTest {
             .setUsername(MY_SQL_CONTAINER.getUsername())
             .setPassword(MY_SQL_CONTAINER.getPassword())
             .setProperty(PropertyKey.enabledTLSProtocols.getKeyName(), "TLSv1.1,TLSv1.2,TLSv1.3")
-            .addEntityClass(Person.class)
+            .addEntityClass(FlightSchedule.class)
             .build();
 
-    private PersonDAO personDAO;
+    private FlightScheduleDAO flightScheduleDAO;
 
     @BeforeEach
     void setUp() {
-        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+        flightScheduleDAO = new FlightScheduleDAO(daoTestRule.getSessionFactory());
     }
 
     @Test
-    void createPerson() {
-        final Person jeff = daoTestRule.inTransaction(() -> personDAO.create(new Person("Jeff", "The plumber", 1995)));
-        assertThat(jeff.getId()).isGreaterThan(0);
-        assertThat(jeff.getFullName()).isEqualTo("Jeff");
-        assertThat(jeff.getJobTitle()).isEqualTo("The plumber");
-        assertThat(jeff.getYearBorn()).isEqualTo(1995);
-        assertThat(personDAO.findById(jeff.getId())).isEqualTo(Optional.of(jeff));
+    void createFlightSchedule() {
+        final FlightSchedule flightSchedule = new FlightSchedule();
+        flightSchedule.setDestinationAirportCode("FCO");
+        final FlightSchedule flightScheduleToFCO = daoTestRule.inTransaction(() -> flightScheduleDAO.create(flightSchedule));
+        assertThat(flightScheduleToFCO.getId()).isGreaterThan(0);
+        assertThat(flightScheduleDAO.findById(flightScheduleToFCO.getId())).isEqualTo(Optional.of(flightScheduleToFCO));
     }
 
     @Test
     void findAll() {
         daoTestRule.inTransaction(() -> {
-            personDAO.create(new Person("Jeff", "The plumber", 1975));
-            personDAO.create(new Person("Jim", "The cook", 1985));
-            personDAO.create(new Person("Randy", "The watchman", 1995));
+            flightScheduleDAO.create(new FlightSchedule());
         });
 
-        final List<Person> persons = personDAO.findAll();
-        assertThat(persons).extracting("fullName").containsOnly("Jeff", "Jim", "Randy");
-        assertThat(persons).extracting("jobTitle").containsOnly("The plumber", "The cook", "The watchman");
-        assertThat(persons).extracting("yearBorn").containsOnly(1975, 1985, 1995);
+        final List<FlightSchedule> flightSchedules = flightScheduleDAO.findAll();
+        assertThat(flightSchedules).extracting("destinationAirportCode").containsOnly("FCO");
     }
 
     @Test
     void handlesNullFullName() {
         assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(() ->
-                daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null", 0))));
+                daoTestRule.inTransaction(() -> flightScheduleDAO.create(new FlightSchedule())));
     }
 }

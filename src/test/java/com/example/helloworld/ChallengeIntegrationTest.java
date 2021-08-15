@@ -1,12 +1,10 @@
 package com.example.helloworld;
 
 import com.example.helloworld.core.FlightSchedule;
-import com.example.helloworld.core.Person;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.glassfish.jersey.client.ClientProperties;
-import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -72,6 +70,7 @@ class ChallengeIntegrationTest {
         expectedFlightScheduleA.setDepartureCity("Amsterdam");
         expectedFlightScheduleA.setDestinationAirportCode("FCO");
         expectedFlightScheduleA.setStops(0);
+        expectedFlightScheduleA.setPrice(342717);
         expectedFlightScheduleA.setDestinationCity("Rome");
         expectedFlightScheduleA.setDeparture(DateTime.parse("2021-09-05T07:05+02:00"));
         expectedFlightScheduleA.setArrival(DateTime.parse("2021-09-05T09:25+02:00"));
