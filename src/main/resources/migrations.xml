@@ -44,9 +44,9 @@
              stripComments="true">
             insert into flightschedule
             (departureAirportCode, destinationAirportCode, airline, durationMinutes, stops,
-             departure, departureCity, arrival, destinationCity)
-            values ('AMS', 'SCO', 'Easyjet', 140, 0, '2021-09-05T07:05:00.000+02:00',
-                    'Amsterdam', '2021-09-05T09:25:00.000+02:00', 'Rome')
+             departure, departureCity, arrival, destinationCity, price)
+            values ('AMS', 'FCO', 'Easyjet', 140, 0, '2021-09-05T07:05:00.000+02:00',
+                    'Amsterdam', '2021-09-05T09:25:00.000+02:00', 'Rome', 342717)
         </sql>
     </changeSet>
 </databaseChangeLog>

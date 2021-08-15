@@ -1,18 +1,281 @@
 {
 	"info": {
 		"_postman_id": "cb7f4ca0-01a3-4555-9240-f782a5a59a9c",
-		"name": "Booking coding challange",
+		"name": "Booking coding challenge",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "flight offer search",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": null
-			},
-			"response": []
+			"name": "Flight schedule",
+			"item": [
+				{
+					"name": "search all params",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?destinationCity=Rome&departureDate=2021-09-05&departureAirportCode=AMS&maxDuration=150&arrivalDate=2021-09-05",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "destinationCity",
+									"value": "Rome"
+								},
+								{
+									"key": "departureDate",
+									"value": "2021-09-05"
+								},
+								{
+									"key": "departureAirportCode",
+									"value": "AMS"
+								},
+								{
+									"key": "maxDuration",
+									"value": "150"
+								},
+								{
+									"key": "arrivalDate",
+									"value": "2021-09-05"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by arrivalDate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?arrivalDate=2021-09-05",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "arrivalDate",
+									"value": "2021-09-05"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by maxDuration",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?maxDuration=150",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "maxDuration",
+									"value": "150"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by departureDate",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?departureDate=2021-09-05",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "departureDate",
+									"value": "2021-09-05"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by departure airport",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?departureAirportCode=AMS",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "departureAirportCode",
+									"value": "AMS"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by departure city",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?departureCity=Amsterdam",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "departureCity",
+									"value": "Amsterdam"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by destination airport",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?destinationAirportCode=FCO",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "destinationAirportCode",
+									"value": "FCO"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search by destination city",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?destinationCity=Rome",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "destinationCity",
+									"value": "Rome"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No result > 404",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}:{{port}}/flightschedule/search?destinationCity=Rome&departureDate=2021-09-05&departureAirportCode=AMS&maxDuration=150&arrivalDate=2021-09-06",
+							"host": [
+								"{{base_url}}"
+							],
+							"port": "{{port}}",
+							"path": [
+								"flightschedule",
+								"search"
+							],
+							"query": [
+								{
+									"key": "destinationCity",
+									"value": "Rome"
+								},
+								{
+									"key": "departureDate",
+									"value": "2021-09-05"
+								},
+								{
+									"key": "departureAirportCode",
+									"value": "AMS"
+								},
+								{
+									"key": "maxDuration",
+									"value": "150"
+								},
+								{
+									"key": "arrivalDate",
+									"value": "2021-09-06"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://localhost"
+		},
+		{
+			"key": "port",
+			"value": "8443"
 		}
 	]
 }

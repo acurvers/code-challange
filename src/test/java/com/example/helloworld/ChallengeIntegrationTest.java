@@ -70,7 +70,7 @@ class ChallengeIntegrationTest {
         expectedFlightScheduleA.setAirline("Easyjet");
         expectedFlightScheduleA.setDepartureAirportCode("AMS");
         expectedFlightScheduleA.setDepartureCity("Amsterdam");
-        expectedFlightScheduleA.setDestinationAirportCode("SCO");
+        expectedFlightScheduleA.setDestinationAirportCode("FCO");
         expectedFlightScheduleA.setStops(0);
         expectedFlightScheduleA.setDestinationCity("Rome");
         expectedFlightScheduleA.setDeparture(DateTime.parse("2021-09-05T07:05+02:00"));
