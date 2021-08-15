@@ -92,7 +92,8 @@ public class FlightScheduleResourceTest {
         //WHEN
         final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
         when(FLIGHTSCHEDULE_DAO.simpleSearch(null, null, null,
-            null, null, null, null,null)).thenReturn(flightSchedules);
+            null, null, null, null,null, null, null))
+            .thenReturn(flightSchedules);
 
         //THEN
         final List<FlightSchedule> response = RESOURCES

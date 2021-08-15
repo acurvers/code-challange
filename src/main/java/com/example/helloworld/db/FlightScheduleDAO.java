@@ -5,6 +5,7 @@ import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +39,24 @@ public class FlightScheduleDAO extends AbstractDAO<FlightSchedule> {
         Optional<String> destinationCity,
         Optional<String> destinationAirportCode,
         Optional<Integer> maxDur,
-        Optional<DateTime> departure,
-        Optional<DateTime> arrival) {
+        Optional<DateTime> departureDate,
+        Optional<DateTime> arrivalDate,
+        Optional<DateTime> departureDateTime,
+        Optional<DateTime> arrivalDateTime) {
         final Query<FlightSchedule> query = namedTypedQuery(FlightSchedule.SIMPLE_SEARCH_QUERY_NAME);
+
         query.setParameter("maxStops", maxStops.orElse(null));
         query.setParameter("departureCity", departureCity.orElse(null));
         query.setParameter("departureAirportCode", departureAirportCode.orElse(null));
         query.setParameter("destinationCity", destinationCity.orElse(null));
         query.setParameter("destinationAirportCode", destinationAirportCode.orElse(null));
         query.setParameter("maxDurationMinutes", maxDur.orElse(null));
-        query.setParameter("departure", departure.orElse(null));
-        query.setParameter("arrival", arrival.orElse(null));
+        query.setParameter("departureDate", departureDate.orElse(null));
+        query.setParameter("arrivalDate", arrivalDate.orElse(null));
+        query.setParameter("departureNextDay", departureDate.map(x -> x.plusDays(1)).orElse(null));
+        query.setParameter("arrivalNextDay", arrivalDate.map(x -> x.plusDays(1)).orElse(null));
+        query.setParameter("departureDateTime", departureDateTime.orElse(null));
+        query.setParameter("arrivalDateTime", arrivalDateTime.orElse(null));
         final List<FlightSchedule> searchResult = list(query);
         LOGGER.debug("Returning flight schedule count: {}", searchResult.size());
         return searchResult;

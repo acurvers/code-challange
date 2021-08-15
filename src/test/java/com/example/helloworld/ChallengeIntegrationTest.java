@@ -50,10 +50,13 @@ class ChallengeIntegrationTest {
     @Test
     void testWhenDefaultFlightScheduleQueryExpectTwoFlighSchedules() throws Exception {
         final FlightSchedule expectedFlightScheduleA = new FlightSchedule();
+        expectedFlightScheduleA.setId(1L);
         expectedFlightScheduleA.setAirline("Easyjet");
         expectedFlightScheduleA.setDepartureAirportCode("AMS");
-        expectedFlightScheduleA.setDestinationAirportCode("FCO");
+        expectedFlightScheduleA.setDepartureCity("Amsterdam");
+        expectedFlightScheduleA.setDestinationAirportCode("SCO");
         expectedFlightScheduleA.setStops(0);
+        expectedFlightScheduleA.setDestinationCity("Rome");
         expectedFlightScheduleA.setDeparture(DateTime.parse("2021-09-05T07:05+02:00"));
         expectedFlightScheduleA.setArrival(DateTime.parse("2021-09-05T09:25+02:00"));
         expectedFlightScheduleA.setDurationMinutes(140);
@@ -71,9 +74,14 @@ class ChallengeIntegrationTest {
             "AMS",
             "Rome",
             null,
-            "2021-09-05");
+            "2021-09-05",
+            "2021-09-05",
+            150);
         assertThat(flights)
             .withFailMessage("Expected to have flight schedules returned")
+            .isNotEmpty();
+        assertThat(flights)
+            .contains(expectedFlightScheduleA)
             .isNotEmpty();
     }
 
@@ -81,7 +89,9 @@ class ChallengeIntegrationTest {
                                         String departureAirportCode,
                                         String destinationCity,
                                         String destinationAirportCode,
-                                        String departureDate) {
+                                        String departureDate,
+                                        String arrivalDate,
+                                        Integer maxDuration) {
         final WebTarget target = getWebTarget("/flightschedule/search");
 
         return target
@@ -89,9 +99,11 @@ class ChallengeIntegrationTest {
             .queryParam("departureAirportCode", departureAirportCode)
             .queryParam("destinationCity", destinationCity)
             .queryParam("destinationAirportCode", destinationAirportCode)
-            .queryParam("departure", departureDate)
-            .queryParam("arrival", "1")
-            .queryParam("maxDuration", "1")
+            .queryParam("departureDate", departureDate)
+            .queryParam("arrivalDate", arrivalDate)
+            .queryParam("departureDateTime", null)
+            .queryParam("arrivalDateTime", null)
+            .queryParam("maxDuration", maxDuration)
             .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<List<FlightSchedule>>() {});
     }

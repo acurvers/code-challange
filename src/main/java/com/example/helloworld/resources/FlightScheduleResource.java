@@ -44,8 +44,10 @@ public class FlightScheduleResource {
                                            @QueryParam("destinationCity") Optional<String> destinationCity,
                                            @QueryParam("destinationAirportCode") Optional<String> destinationAirportCode,
                                            @QueryParam("maxDuration") Optional<Integer> maxDuration,
-                                           @QueryParam("departure") Optional<String> departure,
-                                           @QueryParam("arrival") Optional<String> arrival) {
+                                           @QueryParam("departureDate") Optional<String> departureDate,
+                                           @QueryParam("arrivalDate") Optional<String> arrivalDate,
+                                           @QueryParam("departureDateTime") Optional<String> departureDateTime,
+                                           @QueryParam("arrivalDateTime") Optional<String> arrivalDateTime) {
         final List<FlightSchedule> flightSchedules = flightScheduleDAO.simpleSearch(
             maxStops,
             departureCity,
@@ -53,17 +55,24 @@ public class FlightScheduleResource {
             destinationCity,
             destinationAirportCode,
             maxDuration,
-            departure.map(this::parseDateTime),
-            arrival.map(this::parseDateTime));
+            departureDate.map(this::parseDateTimeStartDay),
+            arrivalDate.map(this::parseDateTimeStartDay),
+            departureDateTime.map(this::parseDateTime),
+            departureDateTime.map(this::parseDateTime));
         LOGGER.debug("Returning flight schedule count: {}", flightSchedules.size());
         return flightSchedules;
     }
 
-    private DateTime parseDateTime(String x) {
+    private DateTime parseDateTime(String dateTimeStr) {
         try {
-            return DateTime.parse(x);
+            return DateTime.parse(dateTimeStr);
         } catch (Exception ex){
             return null;
         }
+    }
+
+    private DateTime parseDateTimeStartDay(String dateTimeStr) {
+        final DateTime dateTime = parseDateTime(dateTimeStr);
+        return(dateTime==null) ? null : dateTime.withTimeAtStartOfDay();
     }
 }

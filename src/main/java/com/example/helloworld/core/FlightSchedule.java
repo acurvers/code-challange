@@ -1,5 +1,6 @@
 package com.example.helloworld.core;
 
+import com.google.common.base.Objects;
 import org.joda.time.DateTime;
 
 import javax.annotation.Nullable;
@@ -13,7 +14,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.Objects;
+import java.util.StringJoiner;
 
 @Entity
 @Table(name = "flightschedule")
@@ -27,21 +28,25 @@ import java.util.Objects;
             name = FlightSchedule.SIMPLE_SEARCH_QUERY_NAME,
             query = "SELECT f FROM FlightSchedule f "
                 + "WHERE"
-                + " :maxStops IS NULL OR f.stops < :maxStops "
+                + " ( :maxStops IS NULL OR f.stops < :maxStops ) "
                 + "AND"
-                + " :maxDurationMinutes IS NULL OR f.durationMinutes < :maxDurationMinutes "
+                + " ( :maxDurationMinutes IS NULL OR f.durationMinutes < :maxDurationMinutes ) "
                 + "AND"
-                + " :departureCity IS NULL OR f.departureCity < :departureCity "
+                + " ( :departureCity IS NULL OR f.departureCity = :departureCity ) "
                 + "AND"
-                + " :departureAirportCode IS NULL OR f.departureAirportCode < :departureAirportCode "
+                + " ( :departureAirportCode IS NULL OR f.departureAirportCode = :departureAirportCode ) "
                 + "AND"
-                + " :destinationAirportCode IS NULL OR f.destinationAirportCode < :destinationAirportCode "
+                + " ( :destinationAirportCode IS NULL OR f.destinationAirportCode = :destinationAirportCode ) "
                 + "AND"
-                + " :destinationCity IS NULL OR f.destinationCity < :destinationCity "
+                + " ( :destinationCity IS NULL OR f.destinationCity = :destinationCity ) "
                 + "AND"
-                + " :departure IS NULL OR f.departure = :departure "
+                + " ( :departureDate IS NULL OR f.departure >= :departureDate AND f.departure < :departureNextDay ) "
                 + "AND"
-                + " :arrival IS NULL OR f.arrival = :arrival "
+                + " ( :arrivalDate IS NULL OR f.arrival >= :arrivalDate AND f.arrival < :arrivalNextDay ) "
+                + "AND"
+                + " ( :departureDateTime IS NULL OR f.departure = :departureDateTime ) "
+                + "AND"
+                + " ( :arrivalDateTime IS NULL OR f.arrival = :departureDateTime ) "
         )
     }
 )
@@ -55,13 +60,13 @@ public class FlightSchedule {
     private long id;
 
     @Column(name = "durationMinutes")
-//    @Min(value = 0)
-//    @Max(value = 9999)
+    @Min(value = 0)
+    @Max(value = 9999)
     private Integer durationMinutes;
 
     @Column(name = "stops")
-//    @Min(value = 0)
-//    @Max(value = 9999)
+    @Min(value = 0)
+    @Max(value = 9999)
     private Integer stops;
 
     //    price in euro cents
@@ -167,26 +172,65 @@ public class FlightSchedule {
         this.arrival = arrival;
     }
 
+    public String getDepartureCity() {
+        return departureCity;
+    }
+
+    public void setDepartureCity(String departureCity) {
+        this.departureCity = departureCity;
+    }
+
+    public String getDestinationCity() {
+        return destinationCity;
+    }
+
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-
-        if (!(o instanceof FlightSchedule)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
-        FlightSchedule flightSchedule = (FlightSchedule) o;
-
-        return id == flightSchedule.id &&
-            Objects.equals(durationMinutes, flightSchedule.durationMinutes) &&
-            Objects.equals(departureAirportCode, flightSchedule.departureAirportCode) &&
-            Objects.equals(destinationAirportCode, flightSchedule.destinationAirportCode);
+        FlightSchedule that = (FlightSchedule) o;
+        return id == that.id &&
+            Objects.equal(durationMinutes, that.durationMinutes) &&
+            Objects.equal(stops, that.stops) &&
+            Objects.equal(price, that.price) &&
+            Objects.equal(airline, that.airline) &&
+            Objects.equal(departureAirportCode, that.departureAirportCode) &&
+            Objects.equal(destinationAirportCode, that.destinationAirportCode) &&
+            Objects.equal(departureCity, that.departureCity) &&
+            Objects.equal(destinationCity, that.destinationCity) &&
+            (departure == null || departure.compareTo(that.departure) == 0) &&
+            (arrival == null || arrival.compareTo(that.arrival) == 0);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, durationMinutes, departureAirportCode, destinationAirportCode);
+        return Objects.hashCode(id, durationMinutes, stops, price, airline, departureAirportCode, destinationAirportCode, departureCity, destinationCity,
+            departure,
+            arrival);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", FlightSchedule.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("durationMinutes=" + durationMinutes)
+            .add("stops=" + stops)
+            .add("price=" + price)
+            .add("airline='" + airline + "'")
+            .add("departureAirportCode='" + departureAirportCode + "'")
+            .add("destinationAirportCode='" + destinationAirportCode + "'")
+            .add("departureCity='" + departureCity + "'")
+            .add("destinationCity='" + destinationCity + "'")
+            .add("departure=" + departure)
+            .add("arrival=" + arrival)
+            .toString();
     }
 }
