@@ -2,6 +2,7 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.FlightSchedule;
 import com.example.helloworld.db.FlightScheduleDAO;
+import com.example.helloworld.util.DateUtil;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -56,11 +57,11 @@ public class FlightScheduleResource {
             destinationCity,
             destinationAirportCode,
             maxDuration,
-            departureDate.map(this::parseDateTimeStartDay),
-            arrivalDate.map(this::parseDateTimeStartDay),
-            departureDateTime.map(this::parseDateTime),
-            departureDateTime.map(this::parseDateTime));
-
+            departureDate.map(DateUtil::parseDateTimeStartDay),
+            arrivalDate.map(DateUtil::parseDateTimeStartDay),
+            departureDateTime.map(DateUtil::parseDateTime),
+            departureDateTime.map(DateUtil::parseDateTime));
+//        TODO implementation of timezones
         if (flightSchedules.isEmpty()) {
             LOGGER.debug("Returning 404 not found");
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -81,16 +82,5 @@ public class FlightScheduleResource {
         return Response.ok(flightSchedules).build();
     }
 
-    private DateTime parseDateTime(String dateTimeStr) {
-        try {
-            return DateTime.parse(dateTimeStr);
-        } catch (Exception ex){
-            return null;
-        }
-    }
 
-    private DateTime parseDateTimeStartDay(String dateTimeStr) {
-        final DateTime dateTime = parseDateTime(dateTimeStr);
-        return(dateTime==null) ? null : dateTime.withTimeAtStartOfDay();
-    }
 }
