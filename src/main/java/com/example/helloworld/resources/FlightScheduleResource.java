@@ -4,6 +4,8 @@ import com.example.helloworld.core.FlightSchedule;
 import com.example.helloworld.db.FlightScheduleDAO;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.ws.rs.GET;
@@ -31,6 +33,8 @@ public class FlightScheduleResource {
         return flightScheduleDAO.create(flight);
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightScheduleResource.class);
+
     @Path("/search")
     @GET
     @UnitOfWork
@@ -51,6 +55,7 @@ public class FlightScheduleResource {
             maxDuration,
             departure.map(this::parseDateTime),
             arrival.map(this::parseDateTime));
+        LOGGER.debug("Returning flight schedule count: {}", flightSchedules.size());
         return flightSchedules;
     }
 

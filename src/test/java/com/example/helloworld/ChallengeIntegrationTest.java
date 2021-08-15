@@ -4,6 +4,7 @@ import com.example.helloworld.core.FlightSchedule;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
+import org.glassfish.jersey.client.ClientProperties;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,12 @@ import org.junit.jupiter.api.io.TempDir;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import static io.dropwizard.testing.ConfigOverride.config;
@@ -71,7 +72,9 @@ class ChallengeIntegrationTest {
             "Rome",
             null,
             "2021-09-05");
-        assertThat(flights).isNotEmpty();
+        assertThat(flights)
+            .withFailMessage("Expected to have flight schedules returned")
+            .isNotEmpty();
     }
 
     private List<FlightSchedule> search(String departureCity,
@@ -89,12 +92,15 @@ class ChallengeIntegrationTest {
             .queryParam("departure", departureDate)
             .queryParam("arrival", "1")
             .queryParam("maxDuration", "1")
-            .request()
+            .request(MediaType.APPLICATION_JSON)
             .get(new GenericType<List<FlightSchedule>>() {});
     }
 
     private WebTarget getWebTarget(String urlPath) {
-        return APP.client().target("http://localhost:" + APP.getLocalPort() + urlPath);
+        final int READ_TIMEOUT_FOR_DEBUGGING = 500000;
+        return APP.client()
+            .property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT_FOR_DEBUGGING)
+            .target("http://localhost:" + APP.getLocalPort() + urlPath);
     }
 
     @Test

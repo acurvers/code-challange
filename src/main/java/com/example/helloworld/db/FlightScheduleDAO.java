@@ -5,6 +5,8 @@ import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class FlightScheduleDAO extends AbstractDAO<FlightSchedule> {
         return list(namedTypedQuery(FlightSchedule.FIND_ALL_QUERY_NAME));
     }
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightScheduleDAO.class);
+
     public List<FlightSchedule> simpleSearch(
         Optional<Integer> maxStops,
         Optional<String> departureCity,
@@ -46,6 +50,7 @@ public class FlightScheduleDAO extends AbstractDAO<FlightSchedule> {
         query.setParameter("departure", departure.orElse(null));
         query.setParameter("arrival", arrival.orElse(null));
         final List<FlightSchedule> searchResult = list(query);
+        LOGGER.debug("Returning flight schedule count: {}", searchResult.size());
         return searchResult;
     }
 
