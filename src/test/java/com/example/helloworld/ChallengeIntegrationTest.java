@@ -64,6 +64,7 @@ class ChallengeIntegrationTest {
 
     @Test
     void testWhenDefaultFlightScheduleQueryExpectTwoFlighSchedules() throws Exception {
+        //WHEN
         final FlightSchedule expectedFlightScheduleA = new FlightSchedule();
         expectedFlightScheduleA.setId(1L);
         expectedFlightScheduleA.setAirline("Easyjet");
@@ -76,15 +77,7 @@ class ChallengeIntegrationTest {
         expectedFlightScheduleA.setArrival(DateTime.parse("2021-09-05T09:25+02:00"));
         expectedFlightScheduleA.setDurationMinutes(140);
 
-        final FlightSchedule expectedFlightScheduleB = new FlightSchedule();
-        expectedFlightScheduleB.setDurationMinutes(140);
-        expectedFlightScheduleB.setAirline("Easyjet");
-        expectedFlightScheduleB.setDepartureAirportCode("AMS");
-        expectedFlightScheduleB.setDestinationAirportCode("FCO");
-        expectedFlightScheduleB.setStops(0);
-        expectedFlightScheduleB.setDeparture(DateTime.parse("2021-09-05T07:05+02:00"));
-        expectedFlightScheduleB.setArrival(DateTime.parse("2021-09-05T09:25+02:00"));
-
+        //THEN
         final List<FlightSchedule> flights = search(null,
             "AMS",
             "Rome",
@@ -92,12 +85,27 @@ class ChallengeIntegrationTest {
             "2021-09-05",
             "2021-09-05",
             150);
+
+        //VERIFY
         assertThat(flights)
             .withFailMessage("Expected to have flight schedules returned")
             .isNotEmpty();
         assertThat(flights)
             .contains(expectedFlightScheduleA)
             .isNotEmpty();
+    }
+
+    @Test
+    void testLogFileWritten() throws IOException {
+        // The log file is using a size and time based policy, which used to silently
+        // fail (and not write to a log file). This test ensures not only that the
+        // log file exists, but also contains the log line that jetty prints on startup
+        final Path logFile = Paths.get(CURRENT_LOG.get());
+        assertThat(logFile).exists();
+        final String logFileContent = new String(Files.readAllBytes(logFile), UTF_8);
+        assertThat(logFileContent)
+            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
+            .doesNotContain("Exception", "ERROR", "FATAL");
     }
 
     private List<FlightSchedule> search(String departureCity,
@@ -129,18 +137,5 @@ class ChallengeIntegrationTest {
         return APP.client()
             .property(ClientProperties.READ_TIMEOUT, READ_TIMEOUT_FOR_DEBUGGING)
             .target("http://localhost:" + APP.getLocalPort() + urlPath);
-    }
-
-    @Test
-    void testLogFileWritten() throws IOException {
-        // The log file is using a size and time based policy, which used to silently
-        // fail (and not write to a log file). This test ensures not only that the
-        // log file exists, but also contains the log line that jetty prints on startup
-        final Path logFile = Paths.get(CURRENT_LOG.get());
-        assertThat(logFile).exists();
-        final String logFileContent = new String(Files.readAllBytes(logFile), UTF_8);
-        assertThat(logFileContent)
-            .contains("0.0.0.0:" + APP.getLocalPort(), "Starting hello-world", "Started application", "Started admin")
-            .doesNotContain("Exception", "ERROR", "FATAL");
     }
 }

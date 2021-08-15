@@ -17,6 +17,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,10 +31,11 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class FlightScheduleResourceTest {
+
     private static final FlightScheduleDAO FLIGHTSCHEDULE_DAO = mock(FlightScheduleDAO.class);
     public static final ResourceExtension RESOURCES = ResourceExtension.builder()
-            .addResource(new FlightScheduleResource(FLIGHTSCHEDULE_DAO))
-            .build();
+        .addResource(new FlightScheduleResource(FLIGHTSCHEDULE_DAO))
+        .build();
     private ArgumentCaptor<FlightSchedule> flightScheduleArgumentCaptor = ArgumentCaptor.forClass(FlightSchedule.class);
     private FlightSchedule flightSchedule;
 
@@ -61,8 +63,8 @@ public class FlightScheduleResourceTest {
 
         //THEN
         final Response response = RESOURCES.target("/flightschedule")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.entity(flightSchedule, MediaType.APPLICATION_JSON_TYPE));
+            .request(MediaType.APPLICATION_JSON_TYPE)
+            .post(Entity.entity(flightSchedule, MediaType.APPLICATION_JSON_TYPE));
 
         //VERIFY
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
@@ -71,35 +73,43 @@ public class FlightScheduleResourceTest {
     }
 
     @Test
-    void listFlightSchedules() throws Exception {
+    void whenSearchFlightSchedulesExpectResult() throws Exception {
         //WHEN
         final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
         when(FLIGHTSCHEDULE_DAO.findAll()).thenReturn(flightSchedules);
-
-        //THEN
-        final List<FlightSchedule> response = RESOURCES
-            .target("/flightschedule/search")
-            .request()
-            .get(new GenericType<List<FlightSchedule>>() {});
-
-        //VERIFY
-        verify(FLIGHTSCHEDULE_DAO).findAll();
-        assertThat(response).containsAll(flightSchedules);
-    }
-
-    @Test
-    void searchFlightSchedules() throws Exception {
-        //WHEN
-        final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
-        when(FLIGHTSCHEDULE_DAO.simpleSearch(null, null, null,
-            null, null, null, null,null, null, null))
+        when(FLIGHTSCHEDULE_DAO
+            .simpleSearch(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("AMS"), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty()))
             .thenReturn(flightSchedules);
 
         //THEN
         final List<FlightSchedule> response = RESOURCES
             .target("/flightschedule/search")
+            .queryParam("destinationAirportCode", "AMS")
             .request()
-            .get(new GenericType<List<FlightSchedule>>() {});
+            .get(new GenericType<List<FlightSchedule>>() {
+            });
+
+        //VERIFY
+        verify(FLIGHTSCHEDULE_DAO)
+            .simpleSearch(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.of("AMS"), Optional.empty(), Optional.empty(),
+                Optional.empty(), Optional.empty(), Optional.empty());
+        assertThat(response).containsAll(flightSchedules);
+    }
+
+    @Test
+    void whenListAllFlightSchedulesExpectResult() throws Exception {
+        //WHEN
+        final List<FlightSchedule> flightSchedules = Collections.singletonList(flightSchedule);
+        when(FLIGHTSCHEDULE_DAO.findAll())
+            .thenReturn(flightSchedules);
+
+        //THEN
+        final List<FlightSchedule> response = RESOURCES
+            .target("/flightschedule/")
+            .request()
+            .get(new GenericType<List<FlightSchedule>>() {
+            });
 
         //VERIFY
         verify(FLIGHTSCHEDULE_DAO).findAll();

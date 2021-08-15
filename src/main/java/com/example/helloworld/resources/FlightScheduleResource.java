@@ -39,16 +39,16 @@ public class FlightScheduleResource {
     @Path("/search")
     @GET
     @UnitOfWork
-    public Response listFlight(@QueryParam("maxStops") Optional<Integer> maxStops,
-                               @QueryParam("departureCity") Optional<String> departureCity,
-                               @QueryParam("departureAirportCode") Optional<String> departureAirportCode,
-                               @QueryParam("destinationCity") Optional<String> destinationCity,
-                               @QueryParam("destinationAirportCode") Optional<String> destinationAirportCode,
-                               @QueryParam("maxDuration") Optional<Integer> maxDuration,
-                               @QueryParam("departureDate") Optional<String> departureDate,
-                               @QueryParam("arrivalDate") Optional<String> arrivalDate,
-                               @QueryParam("departureDateTime") Optional<String> departureDateTime,
-                               @QueryParam("arrivalDateTime") Optional<String> arrivalDateTime) {
+    public Response listAllFlights(@QueryParam("maxStops") Optional<Integer> maxStops,
+                                   @QueryParam("departureCity") Optional<String> departureCity,
+                                   @QueryParam("departureAirportCode") Optional<String> departureAirportCode,
+                                   @QueryParam("destinationCity") Optional<String> destinationCity,
+                                   @QueryParam("destinationAirportCode") Optional<String> destinationAirportCode,
+                                   @QueryParam("maxDuration") Optional<Integer> maxDuration,
+                                   @QueryParam("departureDate") Optional<String> departureDate,
+                                   @QueryParam("arrivalDate") Optional<String> arrivalDate,
+                                   @QueryParam("departureDateTime") Optional<String> departureDateTime,
+                                   @QueryParam("arrivalDateTime") Optional<String> arrivalDateTime) {
         final List<FlightSchedule> flightSchedules = flightScheduleDAO.simpleSearch(
             maxStops,
             departureCity,
@@ -65,7 +65,19 @@ public class FlightScheduleResource {
             LOGGER.debug("Returning 404 not found");
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        LOGGER.debug("Returning flight schedule count: {}", flightSchedules.size());
+        LOGGER.debug("GET /search Returning flight schedule count: {}", flightSchedules.size());
+        return Response.ok(flightSchedules).build();
+    }
+
+    @GET
+    @UnitOfWork
+    public Response listAllFlights() {
+        final List<FlightSchedule> flightSchedules = flightScheduleDAO.findAll();
+        if (flightSchedules.isEmpty()) {
+            LOGGER.debug("Returning 404 not found");
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        LOGGER.debug("GET / Returning flight schedule count: {}", flightSchedules.size());
         return Response.ok(flightSchedules).build();
     }
 
