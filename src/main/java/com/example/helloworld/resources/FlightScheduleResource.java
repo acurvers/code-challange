@@ -14,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,16 +39,16 @@ public class FlightScheduleResource {
     @Path("/search")
     @GET
     @UnitOfWork
-    public List<FlightSchedule> listFlight(@QueryParam("maxStops") Optional<Integer> maxStops,
-                                           @QueryParam("departureCity") Optional<String> departureCity,
-                                           @QueryParam("departureAirportCode") Optional<String> departureAirportCode,
-                                           @QueryParam("destinationCity") Optional<String> destinationCity,
-                                           @QueryParam("destinationAirportCode") Optional<String> destinationAirportCode,
-                                           @QueryParam("maxDuration") Optional<Integer> maxDuration,
-                                           @QueryParam("departureDate") Optional<String> departureDate,
-                                           @QueryParam("arrivalDate") Optional<String> arrivalDate,
-                                           @QueryParam("departureDateTime") Optional<String> departureDateTime,
-                                           @QueryParam("arrivalDateTime") Optional<String> arrivalDateTime) {
+    public Response listFlight(@QueryParam("maxStops") Optional<Integer> maxStops,
+                               @QueryParam("departureCity") Optional<String> departureCity,
+                               @QueryParam("departureAirportCode") Optional<String> departureAirportCode,
+                               @QueryParam("destinationCity") Optional<String> destinationCity,
+                               @QueryParam("destinationAirportCode") Optional<String> destinationAirportCode,
+                               @QueryParam("maxDuration") Optional<Integer> maxDuration,
+                               @QueryParam("departureDate") Optional<String> departureDate,
+                               @QueryParam("arrivalDate") Optional<String> arrivalDate,
+                               @QueryParam("departureDateTime") Optional<String> departureDateTime,
+                               @QueryParam("arrivalDateTime") Optional<String> arrivalDateTime) {
         final List<FlightSchedule> flightSchedules = flightScheduleDAO.simpleSearch(
             maxStops,
             departureCity,
@@ -59,8 +60,13 @@ public class FlightScheduleResource {
             arrivalDate.map(this::parseDateTimeStartDay),
             departureDateTime.map(this::parseDateTime),
             departureDateTime.map(this::parseDateTime));
+
+        if (flightSchedules.isEmpty()) {
+            LOGGER.debug("Returning 404 not found");
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         LOGGER.debug("Returning flight schedule count: {}", flightSchedules.size());
-        return flightSchedules;
+        return Response.ok(flightSchedules).build();
     }
 
     private DateTime parseDateTime(String dateTimeStr) {

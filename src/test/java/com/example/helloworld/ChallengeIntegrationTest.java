@@ -1,10 +1,12 @@
 package com.example.helloworld;
 
 import com.example.helloworld.core.FlightSchedule;
+import com.example.helloworld.core.Person;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.glassfish.jersey.client.ClientProperties;
+import org.hibernate.exception.ConstraintViolationException;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import java.util.function.Supplier;
 import static io.dropwizard.testing.ConfigOverride.config;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 class ChallengeIntegrationTest {
@@ -45,6 +48,18 @@ class ChallengeIntegrationTest {
     @BeforeAll
     public static void migrateDb() throws Exception {
         APP.getApplication().run("db", "migrate", CONFIG_PATH);
+    }
+
+    @Test
+    void testWhenSearchForNonExistingExpect404() throws Exception {
+        assertThatExceptionOfType(javax.ws.rs.NotFoundException.class).isThrownBy(() ->
+            search(null,
+                "AMS",
+                "Not exists",
+                null,
+                "1021-09-05",
+                "1021-09-05",
+                150));
     }
 
     @Test
@@ -105,7 +120,8 @@ class ChallengeIntegrationTest {
             .queryParam("arrivalDateTime", null)
             .queryParam("maxDuration", maxDuration)
             .request(MediaType.APPLICATION_JSON)
-            .get(new GenericType<List<FlightSchedule>>() {});
+            .get(new GenericType<List<FlightSchedule>>() {
+            });
     }
 
     private WebTarget getWebTarget(String urlPath) {
