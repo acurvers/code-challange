@@ -101,27 +101,27 @@ public class FlightSchedule {
         this.id = id;
     }
 
-    public int getDurationMinutes() {
+    public Integer getDurationMinutes() {
         return durationMinutes;
     }
 
-    public void setDurationMinutes(int durationMinutes) {
+    public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
     }
 
-    public int getStops() {
+    public Integer getStops() {
         return stops;
     }
 
-    public void setStops(int stops) {
+    public void setStops(Integer stops) {
         this.stops = stops;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -180,7 +180,7 @@ public class FlightSchedule {
         FlightSchedule flightSchedule = (FlightSchedule) o;
 
         return id == flightSchedule.id &&
-            durationMinutes == flightSchedule.durationMinutes &&
+            Objects.equals(durationMinutes, flightSchedule.durationMinutes) &&
             Objects.equals(departureAirportCode, flightSchedule.departureAirportCode) &&
             Objects.equals(destinationAirportCode, flightSchedule.destinationAirportCode);
     }
