@@ -14,6 +14,7 @@
 No setup required
 
 ### Run
+There is a /dist directory which contains all the files
 Just use the run.cmd or run.sh in the dist directory
 Or use: `java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar server booking.yml`<br/>
 Should now be running on `https://localhost:8943` (SSH) <br/>
