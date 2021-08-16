@@ -1,4 +1,5 @@
 # Booking coding challenge
+Github repo [https://github.com/acurvers/code-challange](https://github.com/acurvers/code-challange)
 
 ## Project
 ### Description
@@ -23,7 +24,7 @@ TODO add API doc (swagger?)
 
 ### Run
 There is a /dist directory which contains all the files
-Just use the run.cmd or run.sh in the dist directory
+Just use the `run.cmd` or `source run.sh` in the dist directory
 Or use: `java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar server booking.yml`<br/>
 Should now be running on `https://localhost:8943` (SSH) <br/>
 Alternatively use dockerfile to run as docker container
