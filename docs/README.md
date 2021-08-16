@@ -50,12 +50,20 @@ Basic sample domain model:<br/>
 ![](Domain.png)
 
 ### Troubleshooting
+
+#### Database
 Database can be cleared with:</br>
 `java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar db drop-all booking.yml --confirm-delete-everything`</br>
 Recreated with:</br>
 Init h2 DB:</br>
-`java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar db migrate booking.yml`
+`java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar db migrate booking.yml`</br>
+
+
+#### Java 11
 Wrong java version then add the full path to Java</br>
 For example on Windows: `"C:\Program Files\Java\jdk-11.0.1\bin\java.exe" -jar booking-coding-challenge-1.0.0-SNAPSHOT.jar server booking.yml`</br>
+
+
+### Maven plugin problem
 For dev work: add `-Dmdep.analyze.skip=true` if this maven plugin gives trouble</br>
 `mvn compile -Dmdep.analyze.skip=true -f pom.xml`</br>
