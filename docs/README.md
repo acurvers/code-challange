@@ -13,20 +13,6 @@
 ### Setup
 No setup required
 
-### Run
-There is a /dist directory which contains all the files
-Just use the run.cmd or run.sh in the dist directory
-Or use: `java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar server booking.yml`<br/>
-Should now be running on `https://localhost:8943` (SSH) <br/>
-Optionally can be tested with Postman, import the `"Booking coding challenge.postman_collection.json"`
-
-#### Used ports
-Non default ports to prevent conflicts
-* 8680 HTTP  (main application port)
-* 8943 HTTPS (main application port)
-* 8082 HTTP  (admin connector)
-* 8445 HTTPS (admin connector)
-
 ## HTTP endpoints
 TODO add API doc (swagger?)
 - ```/flightschedule```
@@ -35,10 +21,26 @@ TODO add API doc (swagger?)
 - ```/flightschedule/search```
     - GET; Searches `flightschedules` Returns found `flightschedules`
 
+### Run
+There is a /dist directory which contains all the files
+Just use the run.cmd or run.sh in the dist directory
+Or use: `java -jar dist\booking-coding-challenge-1.0.0-SNAPSHOT.jar server booking.yml`<br/>
+Should now be running on `https://localhost:8943` (SSH) <br/>
+Alternatively use dockerfile to run as docker container
+`source docker_build_run.sh` or `docker_build_run.cmd`
+
 ### Test
-Use junit / IT test or postman
+Use junit / IT test or
+can be tested with Postman, import the `"Booking coding challenge.postman_collection.json"`
 Data in DB:<br/>
 ![](data.png)
+
+#### Used ports
+Non default ports to prevent conflicts
+* 8680 HTTP  (main application port)
+* 8943 HTTPS (main application port)
+* 8082 HTTP  (admin connector)
+* 8445 HTTPS (admin connector)
 
 ### Disclaimer
 a lot of things have been omitted and even what I have built is just PoC / WIP.
